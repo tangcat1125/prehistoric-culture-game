@@ -1,0 +1,10 @@
+# Local source material and editor previews; runtime uses the WebP packs.
+work/
+assets/emotions/
+assets/**/_source_png_backup/
+
+# Local OS/editor files
+.DS_Store
+Thumbs.db
+*.tmp
+*.bak

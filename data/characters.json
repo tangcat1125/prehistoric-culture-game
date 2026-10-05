@@ -1,0 +1,53 @@
+{
+  "description": "初始6位先民。能力傾向為遊戲機制，非考古確定之性別分工。",
+  "characters": [
+    {
+      "id": "elder_m",
+      "name": "老爺爺",
+      "ageGroup": "老年",
+      "gender": "MALE",
+      "initialRole": "經驗、石器",
+      "description": "熟悉石材特性與工具製作"
+    },
+    {
+      "id": "elder_f",
+      "name": "老奶奶",
+      "ageGroup": "老年",
+      "gender": "FEMALE",
+      "initialRole": "經驗、採集",
+      "description": "熟悉植物採集與環境辨識"
+    },
+    {
+      "id": "young_m1",
+      "name": "青年男A",
+      "ageGroup": "青壯",
+      "gender": "MALE",
+      "initialRole": "狩獵、搬運",
+      "description": "體力充沛，擅長前哨探索"
+    },
+    {
+      "id": "young_m2",
+      "name": "青年男B",
+      "ageGroup": "青壯",
+      "gender": "MALE",
+      "initialRole": "石器、漁獵",
+      "description": "擅長觀察海岸石材與潮間水域"
+    },
+    {
+      "id": "young_f1",
+      "name": "青年女A",
+      "ageGroup": "青壯",
+      "gender": "FEMALE",
+      "initialRole": "採集、探索",
+      "description": "敏銳細心，擅長採集與搜尋"
+    },
+    {
+      "id": "young_f2",
+      "name": "青年女B",
+      "ageGroup": "青壯",
+      "gender": "FEMALE",
+      "initialRole": "食物、營地",
+      "description": "擅長生活營理與食物分配"
+    }
+  ]
+}

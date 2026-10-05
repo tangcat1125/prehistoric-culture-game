@@ -1,0 +1,78 @@
+{
+  "chapter": 1,
+  "title": "第一章｜找到可以生活的地方",
+  "historicalNote": "依國立臺灣史前文化博物館考據，八仙洞長濱文化人群曾利用海蝕洞穴／岩蔭作為活動營地，留下火塘與石器打製遺跡。本關目標為重建八仙洞聚落營地生活。",
+  "phase1": {
+    "goal": "選一位帶領大家的人",
+    "subtext": "大家需要一位帶頭的人。點點看，誰最適合？"
+  },
+  "phase2": {
+    "question": "大家今晚住這裡嗎？",
+    "correctLocation": "sea_cave",
+    "locations": [
+      {
+        "id": "coast_forest",
+        "name": "森林",
+        "icon": "🌳",
+        "image": "assets/locations/coast_forest.png",
+        "failReason": "這裡沒有地方遮蔽，風雨淋漓，難以度過寒夜。",
+        "failQuote": "這裡不適合成為我們的營地。再找找看吧！"
+      },
+      {
+        "id": "river",
+        "name": "河邊",
+        "icon": "💧",
+        "image": "assets/locations/river.png",
+        "failReason": "夜晚水位上升，潮濕危險，不是安全的休息地點。",
+        "failQuote": "這裡不是安全的休息地點。再找找看吧！"
+      },
+      {
+        "id": "rock",
+        "name": "大石頭旁",
+        "icon": "🪨",
+        "image": "assets/locations/rock.png",
+        "failReason": "單面巨石擋不住風雨，寒夜難熬。",
+        "failQuote": "這塊石頭擋不住風雨。再找找看吧！"
+      },
+      {
+        "id": "sea_cave",
+        "name": "海邊岩洞",
+        "icon": "⛰️",
+        "image": "assets/locations/sea_cave.png",
+        "successReason": "天然岩壁遮蔽風雨，留下了生活的空間。",
+        "successText1": "這裡能遮風，也留下了生活的空間。",
+        "successText2": "我們在這裡住下來吧！"
+      }
+    ]
+  },
+  "round1": {
+    "title": "第1回合｜活下來",
+    "prompt": "今天要先做什麼？",
+    "actions": [
+      {
+        "id": "find_stone",
+        "name": "尋找礫石",
+        "icon": "🪨",
+        "desc": "在海灘尋找適合敲打的硬石。"
+      },
+      {
+        "id": "make_tool",
+        "name": "打製石器",
+        "icon": "🔨",
+        "desc": "單面打擊製作砍砸器與刮削器。"
+      },
+      {
+        "id": "gather_food",
+        "name": "搜尋食物",
+        "icon": "🐟",
+        "desc": "在潮間帶採集貝類與海藻。"
+      },
+      {
+        "id": "make_fire",
+        "name": "生火取暖",
+        "icon": "🔥",
+        "desc": "在洞穴平坦處設立火塘升火。"
+      }
+    ]
+  }
+}

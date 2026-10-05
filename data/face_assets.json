@@ -1,0 +1,18 @@
+{
+  "description": "English asset manifest for the runtime expression packs. Source folder: assets/characters/face_packs.",
+  "packs": {
+    "child_girl": { "sourceLabel": "小女孩", "frames": 5 },
+    "child_boy": { "sourceLabel": "小男孩", "frames": 5 },
+    "elder_male": { "sourceLabel": "老年男性", "frames": 5 },
+    "young_male": { "sourceLabel": "青年男性", "frames": 5 },
+    "young_female": { "sourceLabel": "new uploaded pack", "frames": 5, "status": "ready" }
+  },
+  "frameMeaning": {
+    "expression_01": "normal",
+    "expression_02": "happy",
+    "expression_03": "angry",
+    "expression_04": "sad",
+    "expression_05": "worried",
+    "expression_06_to_10": "reserved-source-frames-removed-from-runtime"
+  }
+}

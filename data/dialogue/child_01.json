@@ -1,0 +1,11 @@
+{
+  "id": "child_01",
+  "name": "小石",
+  "dialogue": {
+    "intro": "我在岩洞旁撿小石子！",
+    "observe": "長老，教我找石頭！",
+    "learn_stone": "看！我也挑到硬石頭了！",
+    "learn_gather": "紅紅的野果可以吃！",
+    "learn_done": "我學會這項新技能了！"
+  }
+}

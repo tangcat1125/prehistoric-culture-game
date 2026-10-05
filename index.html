@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>史前文明演化：第一章｜找到可以生活的地方 (長濱文化·美式摩登原始人剪紙)</title>
+    <!-- Tailwind CSS CDN for utility classes -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/papercraft.css">
+    <link rel="stylesheet" href="css/ui.css">
+</head>
+<body>
+
+    <!-- 遊戲全畫面容器 -->
+    <div id="game-container">
+        <!-- 橫向軸線主畫布 (長濱文化剪紙地景：左穴 ➔ 中森/石 ➔ 右海) -->
+        <canvas id="gameCanvas"></canvas>
+
+        <!-- 遊戲互動 UI 介面層 -->
+        <div id="ui-layer">
+            
+            <!-- 頂部簡約章節橫幅 (無冗餘世紀帝國數值，專注於第一章純粹體驗) -->
+            <header class="chapter-header">
+                <div class="chapter-banner-box">
+                    <span class="text-3xl filter drop-shadow">⛰️</span>
+                    <div>
+                        <h1 id="chapter-banner-title" class="text-lg font-black text-amber-100 tracking-wide drop-shadow">第一章｜找到可以生活的地方</h1>
+                        <div id="chapter-banner-sub" class="text-xs text-amber-200/90 font-bold mt-0.5">大家需要一位帶頭的人。點點看，誰最適合？</div>
+                    </div>
+                </div>
+
+                <div class="header-right-actions flex items-center gap-3">
+                    <!-- 部落穩定度微型 HUD (食物≥70, 住所≥70, 安全≥60 ➔ 形成家庭) -->
+                    <div id="stability-bar" class="stability-bar" title="部落穩定度：食物、住所、安全三項連續達標，開啟繁衍！">
+                        <div class="stab-chip storage-chip" title="鮮食儲存量：魚貝與水果會隨回合耗損，燒陶後保存更久">
+                            <span>🧺</span>
+                            <span id="stab-val-food">0/100</span>
+                        </div>
+                        <div class="stab-chip" title="住所穩定度：八仙洞營地升火避風（需 ≥ 70%）">
+                            <span>⛰️</span>
+                            <span id="stab-val-shelter">88%</span>
+                        </div>
+                        <div class="stab-chip" title="安全穩定度：防禦野獸暴雨侵襲（需 ≥ 60%）">
+                            <span>🛡️</span>
+                            <span id="stab-val-safety">85%</span>
+                        </div>
+                        <div class="stab-chip progress" title="年曆：一年由春、夏、秋、冬四季組成，每回合推進一季">
+                            <span>🌱 季節:</span>
+                            <span id="stab-consecutive-rounds">春季</span>
+                        </div>
+                    </div>
+
+                    <button id="population-summary" class="paper-btn amber text-sm" onclick="game.openRosterModal()" title="查看部族詳細名冊與體力">
+                        <span>👥 男：<b id="population-male">0</b> ｜ 女：<b id="population-female">0</b></span>
+                    </button>
+
+                    <button class="paper-btn jade text-xs" onclick="game.openNmpMuseumModal()">
+                        <span>🏛️ 史前館考據</span>
+                    </button>
+                    <button id="game-speed-btn" class="paper-btn amber text-xs" onclick="game.toggleGameSpeed()" title="加速時間軸與族人生活">
+                        <span>▶ 1x</span>
+                    </button>
+                    <button class="paper-btn jade text-xs" onclick="game.openSkillTreeModal()" title="查看玩家發現與技術延伸">
+                        <span>🧠 技能樹</span>
+                    </button>
+                </div>
+            </header>
+
+            <div id="material-inventory-bar" class="material-inventory-bar" aria-label="資材儲存量">
+                <span class="material-title">資材</span>
+                <span class="material-item"><img src="assets/resources/fish_blue.webp" alt="魚貝"><b id="material-fish-shell">0/100</b></span>
+                <span class="material-item"><img src="assets/resources/fruit.webp" alt="水果"><b id="material-fruit">0/100</b></span>
+                <span class="material-item"><img src="assets/resources/wood.webp" alt="木材"><b id="material-wood">0/100</b></span>
+                <span class="material-item"><img src="assets/resources/stone.webp" alt="石頭"><b id="material-stone">0/100</b></span>
+                <span class="material-item"><span class="material-emoji">🟤</span><b id="material-clay">0/100</b></span>
+                <span class="material-item rare"><img src="assets/resources/jade_disc.webp" alt="玉石"><b id="material-jade">0/100</b></span>
+                <span class="material-item fire-status"><span class="material-emoji">🔥</span><b id="fire-fuel-status">尚未點火</b></span>
+            </div>
+
+            <!-- 回合時間軸：每秒前進一格，30 秒完成一回合 -->
+            <div id="round-timeline" class="round-timeline" aria-live="polite">
+                <div class="round-timeline-head">
+                    <span id="round-timeline-label">第 1 回合時間軸</span>
+                    <strong id="round-year-label">第 1 年</strong>
+                    <b id="round-timeline-countdown">剩餘 60 秒</b>
+                </div>
+                <div class="round-timeline-track"><div id="round-timeline-fill"></div></div>
+                <div class="year-tally" aria-label="石棒計年">
+                    <span class="year-tally-label">石棒計年・已走過 <b id="year-tally-count">0</b> 年</span>
+                    <div id="year-tally-sticks" class="year-tally-sticks"></div>
+                </div>
+                <div class="round-timeline-hint">族人會依照指令持續工作；時間軸走完才進入下回合</div>
+            </div>
+
+            <!-- 底部橫軸導航尺標 (依循長濱地貌：左穴 ➔ 中森石 ➔ 右海) -->
+            <div class="horizontal-compass">
+                <span>⛰️ 海邊岩洞 (八仙洞)</span>
+                <div id="compass-track" class="compass-track" title="點擊滑軌快速橫移鏡頭">
+                    <div id="compass-thumb" class="compass-thumb"></div>
+                </div>
+                <span>🌲 森林 ｜ 🪨 大石頭灘</span>
+                <span>🌊 太平洋沿岸</span>
+            </div>
+
+            <!-- Toast 浮動通知提示 -->
+            <div id="toast-msg" class="toast-msg">提示訊息</div>
+
+            <!-- 階段二：底部居住地選定抽屜 (Phase 2 Location Choice Dock) -->
+            <div id="location-choice-dock" class="location-dock paper-card">
+                <div class="pin-top"></div>
+                <div class="round1-dock-header flex items-center justify-between mb-2">
+                    <div class="flex items-center gap-2">
+                        <span class="text-base">⛺</span>
+                        <h4 class="font-black text-sm text-amber-950">請選擇今晚的居住營地：</h4>
+                    </div>
+                    <span class="text-xs text-stone-600 font-bold bg-amber-100/70 px-2 py-0.5 rounded-full border border-amber-200">點選營地實地勘查</span>
+                </div>
+                <div class="location-card-grid">
+                    <div class="loc-card" onclick="game.chapter1.inspectLocation('coast_forest')" title="點擊前往森林勘查">
+                        <img src="assets/locations/coast_forest.webp" onerror="this.src='assets/locations/coast_forest.png'" class="loc-thumb" alt="森林">
+                        <div class="loc-label">🌳 森林</div>
+                    </div>
+                    <div class="loc-card" onclick="game.chapter1.inspectLocation('river')" title="點擊前往河邊勘查">
+                        <img src="assets/locations/river.webp" onerror="this.src='assets/locations/river.png'" class="loc-thumb" alt="河邊">
+                        <div class="loc-label">💧 河邊</div>
+                    </div>
+                    <div class="loc-card" onclick="game.chapter1.inspectLocation('rock')" title="點擊前往大石頭旁勘查">
+                        <img src="assets/locations/rock.webp" onerror="this.src='assets/locations/rock.png'" class="loc-thumb" alt="大石頭旁">
+                        <div class="loc-label">🪨 大石頭旁</div>
+                    </div>
+                    <div class="loc-card primary-border" onclick="game.chapter1.inspectLocation('sea_cave')" title="點擊前往海邊岩洞勘查">
+                        <img src="assets/locations/sea_cave.webp" onerror="this.src='assets/locations/sea_cave.png'" class="loc-thumb" alt="海邊岩洞">
+                        <div class="loc-label text-emerald-950 font-black">⛰️ 海邊岩洞</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 第 1 回合任務抽屜 (Round 1 Task Dock) -->
+            <div id="round1-task-dock" class="round1-dock paper-card">
+                <div class="pin-top"></div>
+                <div class="flex items-center justify-between mb-2">
+                    <div>
+                        <span class="text-sm font-black text-amber-800">第 1 回合｜活下來</span>
+                        <h4 class="font-black text-base text-amber-950">📋 工作報告</h4>
+                        <p class="round1-dock-subtitle">點擊角色查看工作成果、聽取想法，或直接變更工作</p>
+                    </div>
+                    <span class="paper-tag">點擊角色查看</span>
+                </div>
+                <div class="quick-roster-toolbar" aria-label="角色分類">
+                    <span class="quick-roster-toolbar-title">角色管理</span>
+                    <button class="quick-roster-filter active" data-roster-filter="ALL" onclick="game.setRosterFilter('ALL')">全部</button>
+                    <button class="quick-roster-filter" data-roster-filter="WORKING" onclick="game.setRosterFilter('WORKING')">工作中</button>
+                    <button class="quick-roster-filter" data-roster-filter="IDLE" onclick="game.setRosterFilter('IDLE')">待命</button>
+                    <button class="quick-roster-filter" data-roster-filter="RESEARCH" onclick="game.setRosterFilter('RESEARCH')">研究中</button>
+                    <button class="quick-roster-filter" data-roster-filter="CHILDREN" onclick="game.setRosterFilter('CHILDREN')">小孩</button>
+                    <button class="quick-roster-filter" data-roster-filter="ELDERS" onclick="game.setRosterFilter('ELDERS')">老人</button>
+                </div>
+                <div id="quick-roster-list" class="quick-roster-strip" aria-label="快速選擇族人"></div>
+                <div id="quick-work-actions" class="quick-work-actions">
+                    <span id="quick-worker-label" class="text-xs font-bold text-stone-600">請先選擇一位族人</span>
+                    <div class="flex flex-wrap justify-center gap-2">
+                        <button class="round1-action-btn compact" onclick="game.assignQuickTask('GATHER_WOOD')">🪵 拾柴</button>
+                        <button class="round1-action-btn compact" onclick="game.assignQuickTask('GATHER_FRUIT')">🍒 採果</button>
+                        <button class="round1-action-btn compact" onclick="game.assignQuickTask('STRIKE_STONE')">🪨 採石</button>
+                        <button class="round1-action-btn compact" onclick="game.assignQuickTask('COASTAL_GATHER')">🐚 撿魚貝</button>
+                        <span id="quick-tech-actions" class="quick-tech-actions" aria-label="已完成的技術工作"></span>
+                    </div>
+                </div>
+                <div id="tech-work-circles" class="tech-work-circles" aria-label="已啟動的技術工作圈"></div>
+            </div>
+
+        </div>
+
+        <!-- ========================================== -->
+        <!-- 彈窗 1：階段一【選一位帶領大家的人】候選人卡牌 -->
+        <!-- ========================================== -->
+        <div id="modal-leader-select" class="modal-overlay">
+            <div class="modal-body paper-card max-w-sm text-center">
+                <div class="pin-top"></div>
+                <div class="modal-header mb-1">
+                    <h3 class="text-base font-black text-amber-950">選一位帶領大家的人</h3>
+                    <div class="text-xs text-amber-800 font-bold">點選合適的族人，帶領大家建立營地</div>
+                </div>
+                <div class="flex flex-col items-center my-3">
+                    <img id="leader-modal-avatar" src="" class="w-24 h-24 rounded-full border-4 border-white shadow-lg bg-amber-50 object-contain p-1">
+                    <h4 id="leader-modal-name" class="font-black text-lg text-amber-950 mt-2">老爺爺</h4>
+                    <div id="leader-modal-role" class="text-xs font-bold text-amber-800 bg-amber-100/80 px-2.5 py-0.5 rounded-full mt-1 border border-amber-200">能力傾向：經驗、石器</div>
+                    <div class="quote-box mt-3 p-3 bg-amber-100/70 border border-amber-300 rounded-xl w-full">
+                        <p id="leader-modal-quote" class="text-sm font-extrabold text-stone-800 leading-snug">「我認得哪些石頭能做工具。」</p>
+                    </div>
+                </div>
+                <div class="flex justify-center gap-3 mt-4">
+                    <button class="paper-btn text-xs" onclick="game.chapter1.closeLeaderCandidateModal()">
+                        <span>再看看其他人</span>
+                    </button>
+                    <button id="btn-confirm-leader" class="paper-btn primary text-xs px-5">
+                        <span>👑 選他帶領大家</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- 彈窗 2：階段二【營地確認】頭目詢問「大家今晚住這裡嗎？」 -->
+        <!-- ========================================== -->
+        <div id="modal-location-confirm" class="modal-overlay">
+            <div class="modal-body paper-card max-w-md">
+                <div class="pin-top"></div>
+                <div class="modal-header">
+                    <h3 id="loc-confirm-title" class="text-base font-black text-amber-950">⛰️ 海邊岩洞</h3>
+                </div>
+                <div class="my-3">
+                    <img id="loc-confirm-img" src="" class="w-full h-44 object-cover rounded-xl border-2 border-white shadow">
+                    <p id="loc-confirm-desc" class="text-xs text-stone-700 mt-2 p-2 bg-stone-50 rounded-lg border border-stone-200 leading-relaxed"></p>
+                    
+                    <div class="flex items-center gap-3 mt-3 p-3 bg-amber-50 rounded-xl border border-amber-200">
+                        <img id="loc-confirm-leader-avatar" src="" class="w-12 h-12 rounded-full border-2 border-amber-600 bg-white shadow-sm flex-shrink-0">
+                        <div>
+                            <div class="text-xs font-bold text-amber-800"><span id="loc-confirm-leader-name">帶頭者</span> 徵詢大家：</div>
+                            <div class="text-sm font-black text-amber-950 mt-0.5">「大家今晚住這裡嗎？」</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-end gap-3 mt-4">
+                    <button class="paper-btn text-xs" onclick="game.chapter1.closeLocationConfirmModal()">
+                        <span>再看看</span>
+                    </button>
+                    <button class="paper-btn primary text-xs px-6" onclick="game.chapter1.confirmSettlement()">
+                        <span>住這裡 ⛺</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- 彈窗 3：失敗歷程【六張人物臉部依序快速特寫】 -->
+        <!-- ========================================== -->
+        <div id="modal-face-sequence" class="modal-overlay face-sequence-overlay">
+            <div class="face-sequence-card paper-card text-center p-6">
+                <img id="face-sequence-img" src="" class="w-36 h-36 mx-auto rounded-full border-4 border-red-300 shadow-xl object-contain bg-white p-1">
+                <h3 id="face-sequence-name" class="text-lg font-black text-stone-900 mt-3">老爺爺</h3>
+                <div id="face-sequence-expr" class="text-sm font-extrabold text-red-700 mt-1">😠 生氣受凍</div>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- 彈窗 4：失敗結果【這裡住不下去……】與重新選擇 -->
+        <!-- ========================================== -->
+        <div id="modal-game-over" class="modal-overlay">
+            <div class="modal-body paper-card max-w-md text-center">
+                <div class="pin-top"></div>
+                <div class="my-2">
+                    <img src="assets/ui/game_over.webp" onerror="this.src='assets/ui/game_over.png'" class="w-24 h-16 mx-auto mb-2 object-contain">
+                    <h2 class="text-2xl font-black text-stone-900">這裡住不下去……</h2>
+                    <p id="game-over-sub" class="text-sm font-bold text-amber-900 mt-2">這裡不適合成為我們的營地。再找找看吧！</p>
+                    
+                    <div class="text-xs text-stone-700 text-left bg-amber-50/90 border border-amber-200/80 p-3 rounded-xl mt-4 leading-relaxed">
+                        <b>🏛️ 史前館考據：</b><br>
+                        八仙洞長濱文化人群曾利用海蝕洞穴／岩蔭活動，留下了火塘與石器製作痕跡。海邊岩洞能遮蔽太平洋強風暴雨，是先民理想的生活空間。
+                    </div>
+                </div>
+                <div class="flex justify-center mt-5">
+                    <button class="paper-btn primary text-base px-8 py-3" onclick="game.chapter1.retrySettlement()">
+                        <span>🔄 重新選擇</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- 彈窗 5：成功定居【我們在這裡住下來吧！】與 6 人歡呼特寫 -->
+        <!-- ========================================== -->
+        <div id="modal-happy-celebration" class="modal-overlay">
+            <div class="modal-body paper-card max-w-2xl text-center">
+                <div class="pin-top"></div>
+                <div class="my-2">
+                    <div class="text-3xl mb-1">🎉</div>
+                    <h2 class="text-2xl font-black text-amber-950">我們在這裡住下來吧！</h2>
+                    <p class="text-xs text-amber-800 font-bold mt-1">這裡能遮風，也留下了生活的空間。</p>
+
+                    <div id="happy-faces-grid" class="grid grid-cols-3 gap-3 my-4">
+                        <!-- 動態注入 6 人高興特寫表情 -->
+                    </div>
+
+                    <div class="text-xs text-stone-700 text-left bg-amber-50 border border-amber-200 p-3 rounded-xl leading-relaxed">
+                        <b>🏛️ 國立臺灣史前文化博物館：</b><br>
+                        八仙洞海蝕洞穴群是臺灣目前已知最早的舊石器時代長濱文化遺址（距今約 3 萬至 5 千年前）。先民在洞穴中升火取暖、敲擊安山岩與石英石器、烹煮採集的潮間海產。
+                    </div>
+                </div>
+                <div class="flex justify-center mt-4">
+                    <button class="paper-btn primary text-base px-8 py-3" onclick="game.chapter1.proceedToRound1()">
+                        <span>進入 第 1 回合｜活下來 ✨</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- 彈窗 6：國立臺灣史前文化博物館典藏圖鑑 -->
+        <!-- ========================================== -->
+        <div id="modal-nmp-lore" class="modal-overlay">
+            <div class="modal-body paper-card">
+                <div class="pin-top"></div>
+                <div class="modal-header">
+                    <div class="text-3xl mb-1">🏛️</div>
+                    <h2>國立臺灣史前文化博物館典藏圖鑑</h2>
+                    <div class="sub">
+                        參考媒介：國立臺灣史前文化博物館考古研究成果與典藏文物
+                    </div>
+                </div>
+
+                <div id="nmp-lore-container" class="space-y-4">
+                    <!-- 動態注入史前館文獻卡片 -->
+                </div>
+
+                <div class="flex justify-center mt-4">
+                    <button class="paper-btn text-xs" onclick="game.closeNmpMuseumModal()">
+                        <span>關閉圖鑑返回遊戲</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="modal-skill-tree" class="modal-overlay skill-tree-overlay">
+            <div class="modal-body paper-card skill-tree-card">
+                <div class="pin-top"></div>
+                <div class="modal-header">
+                    <div class="text-3xl mb-1">🧠</div>
+                    <h2>玩家技能樹</h2>
+                    <div class="sub">把族人的偶然發現收納起來，再看它能延伸出什麼技術。</div>
+                </div>
+                <div id="skill-tree-content"></div>
+                <div class="skill-tree-footer">
+                    <button class="paper-btn text-sm" onclick="game.openTeacherSummary()">🧑‍🏫 老師進度總結</button>
+                    <button class="paper-btn text-sm" onclick="game.closeSkillTreeModal()">關閉技能樹</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="modal-teacher-summary" class="modal-overlay teacher-summary-overlay">
+            <div class="modal-body paper-card teacher-summary-card text-center">
+                <div class="pin-top"></div>
+                <div class="modal-header">
+                    <div class="text-3xl mb-1">🏁</div>
+                    <h2>老師進度總結</h2>
+                    <div class="sub">結束遊戲後，學生可以回看這一局如何走向長濱文化。</div>
+                </div>
+                <div id="teacher-summary-content"></div>
+                <div class="skill-tree-footer">
+                    <button class="paper-btn primary text-sm" onclick="game.finishGameForTeacher()">結束本局並保存進度</button>
+                    <button class="paper-btn text-sm" onclick="game.closeTeacherSummary()">返回遊戲</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="modal-festival" class="modal-overlay festival-overlay">
+            <div class="modal-body paper-card festival-card text-center">
+                <div class="pin-top"></div>
+                <div class="festival-flame">🔥</div>
+                <h2>火塘祭典開始了！</h2>
+                <p id="festival-myth-subtitle" class="festival-subtitle">族人把生活經驗說成故事</p>
+                <div class="festival-dance">🕺　💃　🕺　💃</div>
+                <div class="festival-story"><span>神話傳說</span><p id="festival-myth-text">火光讓我們記住彼此，也記住活下來的方法。</p></div>
+                <p class="festival-note">族人正在畫面中央的火堆旁圍圈跳舞；祭典結束後，這段故事會留在工作報告中。</p>
+                <button class="paper-btn primary text-sm" onclick="game.closeFestivalMyth()">🔥 記住這個傳說</button>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- 彈窗 7：部落誕生新成員【幼兒誕生慶祝】 -->
+        <!-- ========================================== -->
+        <div id="modal-new-child" class="modal-overlay">
+            <div class="modal-body paper-card max-w-md text-center">
+                <div class="pin-top"></div>
+                <div class="my-3">
+                    <div class="text-4xl mb-2">👶</div>
+                    <h2 class="text-2xl font-black text-amber-950">部落多了一個新成員！</h2>
+                    <h4 id="new-child-name" class="text-base font-black text-amber-800 mt-1">小石（幼兒，2歲）</h4>
+                    
+                    <div class="p-3 bg-amber-50 rounded-xl border border-amber-200 text-xs text-stone-700 text-left my-4 leading-relaxed">
+                        <b>🌱 史前育幼理念：先活得穩定，人口才能增加。</b><br>
+                        幼兒年幼脆弱，會在營地跟隨大人、玩耍與觀察生活；經過三年後才會正式長大，加入完整工作名冊。
+                    </div>
+                </div>
+                <div class="flex justify-center">
+                    <button class="paper-btn primary text-sm px-8 py-2.5" onclick="game.inheritance.closeNewChildModal()">
+                        <span>呵護新生命·繼續生活 🌾</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- 彈窗：穩定達標後的伴侶決定 -->
+        <!-- ========================================== -->
+        <div id="modal-family-formation" class="modal-overlay family-overlay">
+            <div class="modal-body paper-card max-w-md text-center">
+                <div class="pin-top"></div>
+                <div class="my-3">
+                    <div class="text-4xl mb-2">❤️</div>
+                    <h2 class="text-2xl font-black text-amber-950">新的家庭正在形成</h2>
+                    <p class="text-sm font-bold text-amber-800 mt-1">一對年輕男女想一起守護這個家</p>
+                    <div class="family-couple-row">
+                        <div><img id="family-male-face" class="family-face" src=""><b>青年男子</b></div>
+                        <span class="text-2xl text-red-500">❤</span>
+                        <div><img id="family-female-face" class="family-face" src=""><b>青年女子</b></div>
+                    </div>
+                    <div id="family-couple-names" class="text-lg font-black text-amber-950">青年男子 ＋ 青年女子</div>
+                    <p class="text-xs text-stone-700 bg-amber-50 border border-amber-200 rounded-xl p-3 mt-3">前三季內會啟動婚姻機制；穩定度足夠時自然形成，若資源不足也會為了人口延續安排可配對族人。確認結為伴侶後，三回合會隨機迎來男孩或女孩。</p>
+                </div>
+                <button class="paper-btn primary text-base px-8 py-3" onclick="game.inheritance.confirmFamilyFormation()">讓他們結為伴侶 ❤️</button>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- 彈窗：角色週期性回報新線索（最上層，底層工作不中斷） -->
+        <!-- ========================================== -->
+        <div id="modal-npc-dialogue" class="modal-overlay npc-dialogue-overlay">
+            <div class="modal-body paper-card max-w-lg text-center npc-dialogue-card">
+                <div class="pin-top"></div>
+                <div class="my-3">
+                    <div class="text-3xl mb-1">💬</div>
+                    <h2 id="npc-dialogue-title" class="text-xl font-black text-amber-950">族人來報告了！</h2>
+                    <img id="npc-dialogue-face" class="npc-dialogue-face" src="">
+                    <h3 id="npc-dialogue-name" class="text-lg font-black text-amber-950">族人</h3>
+                    <div id="npc-dialogue-task" class="text-xs font-bold text-amber-800 bg-amber-100 rounded-full px-3 py-1 inline-block mt-1">目前指令：工作中</div>
+                    <div class="npc-dialogue-bubble">
+                        <p id="npc-dialogue-text" class="text-base font-bold text-stone-800 leading-relaxed">「我好像發現了什麼……」</p>
+                        <div id="npc-dialogue-findings" class="npc-findings" aria-label="本回合故事線索"></div>
+                        <div id="npc-dialogue-actions" class="npc-dialogue-actions"></div>
+                        <button id="npc-dialogue-confirm-btn" class="paper-btn primary text-sm px-8 py-2.5 mt-4" onclick="game.confirmNpcDialogue()">確定，繼續工作</button>
+                    </div>
+                    <p class="text-xs text-stone-500 mt-3">按下確定後關閉對談，底層工作會持續執行。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- 彈窗 8：長老技能傳承三段式介面 (觀察 ➔ 跟著做 ➔ 學會) -->
+        <!-- ========================================== -->
+        <div id="modal-apprenticeship" class="modal-overlay">
+            <div class="modal-body paper-card max-w-lg">
+                <div class="pin-top"></div>
+                <div class="modal-header text-center">
+                    <h3 class="text-lg font-black text-amber-950">長老言傳身教·技術傳承</h3>
+                    <div class="text-xs text-stone-600 mt-0.5">
+                        <span id="appr-child-name" class="font-bold text-amber-800">小石</span> 向 
+                        <span id="appr-elder-name" class="font-bold text-amber-900">老爺爺</span> 請益
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3 p-3 bg-amber-50/80 rounded-xl border border-amber-200 my-3">
+                    <img id="appr-elder-face" src="" class="w-14 h-14 rounded-full border-2 border-amber-600 bg-white shadow-sm flex-shrink-0">
+                    <div>
+                        <div class="text-xs font-bold text-amber-800">長老叮嚀：</div>
+                        <div id="appr-elder-dialogue" class="text-sm font-black text-amber-950 mt-0.5">「跟我來，我教你找石頭。」</div>
+                    </div>
+                </div>
+
+                <!-- 可傳授之技能清單 -->
+                <div id="appr-skills-list" class="space-y-2 mb-3">
+                    <!-- 動態注入可學技能卡片 -->
+                </div>
+
+                <!-- 三段式學習步驟進度 (觀察 ➔ 跟著做 ➔ 自己完成) -->
+                <div id="appr-step-container" class="border-t border-amber-300 pt-2">
+                    <div class="flex items-center justify-between text-xs font-bold text-amber-900 mb-1">
+                        <span id="appr-current-skill-title">傳承技能：挑選石材</span>
+                        <span>步驟進度</span>
+                    </div>
+
+                    <div class="appr-step-container">
+                        <div id="appr-step-node-1" class="appr-step-node active">1</div>
+                        <div id="appr-step-node-2" class="appr-step-node">2</div>
+                        <div id="appr-step-node-3" class="appr-step-node">3</div>
+                    </div>
+
+                    <!-- 當前步驟互動盒 -->
+                    <div id="appr-interactive-box" class="appr-interactive-box">
+                        <!-- 動態注入微型小任務 -->
+                    </div>
+                </div>
+
+                <div class="flex justify-end gap-3 mt-4">
+                    <button class="paper-btn text-xs" onclick="game.inheritance.closeApprenticeshipModal()">
+                        <span>稍後再學</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- 彈窗 9：技術斷代危機 (長老離世且無人繼承技能) -->
+        <!-- ========================================== -->
+        <div id="modal-knowledge-lost" class="modal-overlay">
+            <div class="modal-body paper-card max-w-md text-center border-4 border-red-400">
+                <div class="pin-top"></div>
+                <div class="my-3">
+                    <div class="text-4xl mb-2">❌</div>
+                    <h2 class="text-2xl font-black text-red-950">史前技術斷代危機！</h2>
+                    <p class="text-xs font-bold text-amber-900 mt-1">
+                        <span id="lost-elder-name">老爺爺</span> 長老離世前，部落沒有孩子學會：
+                    </p>
+                    <div id="lost-skill-name" class="text-lg font-black text-red-700 bg-red-50 p-2.5 rounded-xl border border-red-200 my-3">
+                        🔨 【打製石器】
+                    </div>
+
+                    <div class="p-3 bg-amber-50 rounded-xl border border-amber-200 text-xs text-stone-700 text-left leading-relaxed">
+                        <b>🏛️ 史前館深刻考據：</b><br>
+                        史前時代沒有教科書與文字紀錄，所有文明與生產技術完全仰賴長老口傳心授。如果長老離世前未將技能傳承給孩子，這項技術就會在聚落中失傳！
+                    </div>
+                </div>
+                <div class="flex justify-center">
+                    <button class="paper-btn primary text-sm px-8 py-2.5" onclick="game.inheritance.closeKnowledgeLostModal()">
+                        <span>警惕傳承·繼續守護部族 🌾</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="modal-death-ritual" class="modal-overlay death-ritual-overlay">
+            <div class="modal-body paper-card death-ritual-card text-center">
+                <div class="pin-top"></div>
+                <div class="death-candle">🕯️</div>
+                <h2>長老即將離開部族</h2>
+                <p><b id="death-leader-name">部落頭目</b>先向大家說：</p>
+                <div class="death-dialogue">「我們要用魚與果實送<b id="death-elder-name">長老</b>走完最後一段路。請回到火塘，跳一支送別的舞，讓他的經驗成為部族的記憶。」</div>
+                <div id="death-food-status" class="death-food-status">魚貝 80/100＋水果 80/100（已達 80% 儀式準備）</div>
+                <p class="death-note">確認後，告別祭典會持續一回合；儀式完成後，長老將安葬在居住地旁，並延伸出神靈祈禱與葬禮儀式。</p>
+                <button class="paper-btn primary text-sm" onclick="game.confirmElderDeathRitual()">🕯️ 啟動告別祭典</button>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- 彈窗 10：部族人員名單與任務派遣 (Roster Modal) -->
+        <!-- ========================================== -->
+        <div id="modal-roster" class="modal-overlay">
+            <div class="modal-body paper-card max-w-2xl max-h-[85vh] flex flex-col">
+                <div class="pin-top"></div>
+                <div class="modal-header flex items-center justify-between pb-2 border-b border-amber-200">
+                    <div class="text-left">
+                        <h3 class="text-lg font-black text-amber-950 flex items-center gap-2">
+                            <span>👥</span>
+                            <span>八仙洞部族人員名冊與任務派遣</span>
+                        </h3>
+                        <div class="text-xs text-amber-800 font-bold mt-0.5">
+                            依據性別、年齡經驗分工｜隨時掌握體力狀態與意外發明
+                        </div>
+                    </div>
+                    <button class="paper-btn text-xs px-3 py-1" onclick="game.closeRosterModal()">✕ 關閉</button>
+                </div>
+
+                <!-- 體力與分工歷史考據提示 -->
+                <div class="bg-amber-50 p-2.5 rounded-xl border border-amber-200 text-xs text-stone-700 my-2 flex items-start gap-2 text-left">
+                    <span class="text-base flex-shrink-0">💡</span>
+                    <div>
+                        <b>勞力與生理分工傾向：</b>
+                        女性在潮間帶魚貝撿拾與採果精巧細膩（收穫+75%）；長老經驗豐富產出最多但體力耗損快（每次耗30體力需回火塘休息）；男性粗重採石與重勞力有利（產出+50%）；幼兒與小孩學會技能後才能工作。
+                    </div>
+                </div>
+
+                <!-- 族人名單容器 (可滾動) -->
+                <div id="roster-members-list" class="space-y-3 overflow-y-auto flex-grow pr-1 my-2 max-h-[50vh]">
+                    <!-- 動態渲染族人卡牌 -->
+                </div>
+
+                <!-- 底部已收納技能與意外發明展示 -->
+                    <div class="pt-2 border-t border-amber-300 flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-bold text-amber-900">✨ 部族已收納發明技巧：</span>
+                        <div id="discovered-skills-list" class="flex flex-wrap gap-1.5">
+                            <!-- 動態注入已獲得技巧標籤 -->
+                        </div>
+                    </div>
+                    <button class="paper-btn text-xs px-4" onclick="game.closeRosterModal()">關閉名冊</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- 彈窗 11：勞動中的意外發現與文化演進 (Serendipitous Discovery Modal) -->
+        <!-- ========================================== -->
+        <div id="modal-discovery" class="modal-overlay">
+            <div class="modal-body paper-card max-w-lg text-center border-4 border-amber-400">
+                <div class="pin-top"></div>
+                <div class="modal-header mb-2">
+                    <div class="text-3xl mb-1">💡</div>
+                    <h3 id="disc-title" class="text-lg font-black text-amber-950">意外發現：樹皮的強韌纖維！</h3>
+                    <div id="disc-worker-quote" class="text-sm font-extrabold text-amber-800 bg-amber-100/80 px-3 py-1 rounded-full inline-block mt-1 border border-amber-200">
+                        「這樹皮剝下來很韌！」—— 青年女A
+                    </div>
+                </div>
+
+                <div class="text-left my-3 space-y-2">
+                    <p id="disc-story" class="text-xs text-stone-700 bg-stone-50 p-2.5 rounded-xl border border-stone-200 leading-relaxed"></p>
+                    
+                    <div class="p-3 bg-amber-50 rounded-xl border border-amber-300">
+                        <div id="disc-question" class="text-xs font-black text-amber-950 mb-2">先民該如何善用這個偶然的發現？</div>
+                        <div class="space-y-2">
+                            <button class="w-full text-left p-2.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 border-2 border-emerald-400 text-xs text-emerald-950 font-bold transition flex items-center gap-2" onclick="game.discovery.chooseCorrectOption()">
+                                <span class="text-lg">✨</span>
+                                <span id="disc-correct-text">【收納入技巧】雙手搓捻成細繩，用於綑綁與編織！</span>
+                            </button>
+                            <button class="w-full text-left p-2.5 rounded-lg bg-stone-100 hover:bg-stone-200 border border-stone-300 text-xs text-stone-600 font-bold transition flex items-center gap-2" onclick="game.discovery.chooseWrongOption()">
+                                <span class="text-lg">💨</span>
+                                <span id="disc-wrong-text">當成普通柴火，直接丟進火塘燒掉</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="p-2.5 bg-amber-100/60 rounded-xl border border-amber-200 text-[11px] text-amber-900 leading-relaxed">
+                        <b>🏛️ 史前館考據：</b>
+                        <span id="disc-museum-note"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- 腳本模組載入 (順序：設定檔 ➔ 核心引擎 ➔ 實體 ➔ 第一章 ➔ 傳承引擎 ➔ 意外發明 ➔ 主遊戲) -->
+    <script src="js/config/eras.js"></script>
+    <script src="js/config/burials.js"></script>
+    <script src="js/config/nmp_lore.js"></script>
+    <script src="js/core/sound.js"></script>
+    <script src="js/core/camera.js"></script>
+    <script src="js/entities/character.js"></script>
+    <script src="js/entities/workstation.js"></script>
+    <script src="js/entities/disaster.js"></script>
+    <script src="js/core/chapter1.js"></script>
+    <script src="js/core/inheritance.js"></script>
+    <script src="js/core/discovery.js"></script>
+    <script src="js/core/game.js"></script>
+</body>
+</html>

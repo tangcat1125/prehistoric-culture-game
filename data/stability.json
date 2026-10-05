@@ -1,0 +1,13 @@
+{
+  "stabilityRequirements": {
+    "foodThreshold": 70,
+    "shelterThreshold": 70,
+    "safetyThreshold": 60,
+    "consecutiveRoundsNeeded": 3,
+    "gestationRounds": 2
+  },
+  "educationalPrinciple": {
+    "concept": "先活得穩定，人口才能增加",
+    "historicalBasis": "長濱文化先民必須在八仙洞海蝕洞建立穩定火塘、儲備基本食物與抵禦野獸寒風後，部族才有餘裕哺育幼童、延續下一代生命。"
+  }
+}

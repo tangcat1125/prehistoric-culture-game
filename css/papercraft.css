@@ -1,0 +1,114 @@
+/* 摩登原始人·厚紙板剪紙風格 (Cardboard Cutout & Papercraft Aesthetics) */
+
+.paper-card {
+    background-color: var(--paper-cream);
+    background-image: url('../assets/images/cardboard_texture.webp');
+    background-size: 220px 220px;
+    background-blend-mode: multiply;
+    border: 3px solid #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5), 0 3px 6px rgba(0, 0, 0, 0.3);
+    color: #3e2716;
+    position: relative;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.paper-card::after {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    border: none;
+    border-radius: 16px;
+    pointer-events: none;
+}
+
+.paper-btn {
+    background: #e2c092;
+    background-image: url('../assets/images/cardboard_texture.webp');
+    background-size: 180px 180px;
+    border: 2.5px solid #ffffff;
+    border-radius: 12px;
+    padding: 7px 14px;
+    color: #431407;
+    font-weight: 800;
+    font-size: 0.85rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: transform 0.1s ease, filter 0.15s ease, box-shadow 0.15s ease;
+}
+
+.paper-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.45);
+    filter: brightness(1.05);
+}
+
+.paper-btn:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.paper-btn.primary {
+    background-color: #f59e0b;
+    color: #ffffff;
+    border-color: #fef08a;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.paper-btn.danger {
+    background-color: #ef4444;
+    color: #ffffff;
+    border-color: #fee2e2;
+}
+
+.paper-btn.jade {
+    background-color: #10b981;
+    color: #ffffff;
+    border-color: #a7f3d0;
+}
+
+.paper-tag {
+    background: #fdfaf2;
+    border: 1.5px solid #d4b896;
+    border-radius: 999px;
+    padding: 3px 10px;
+    font-size: 0.76rem;
+    font-weight: 700;
+    color: #633912;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+}
+
+/* 厚紙板圖釘裝飾 */
+.pin-top {
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #f43f5e, #9f1239);
+    box-shadow: 0 3px 6px rgba(0,0,0,0.4);
+    border: 1.5px solid #fff;
+    z-index: 5;
+}
+
+/* 時代徽章剪紙 */
+.era-ribbon {
+    background: #451a03;
+    background-image: url('../assets/images/cardboard_texture.webp');
+    border: 2.5px solid #fed7aa;
+    color: #fef3c7;
+    padding: 6px 16px;
+    border-radius: 999px;
+    font-weight: 900;
+    font-size: 0.88rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    letter-spacing: 0.5px;
+}

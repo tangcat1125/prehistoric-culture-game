@@ -1,0 +1,182 @@
+{
+  "discoveries": [
+    {
+      "id": "pottery_discovery",
+      "name": "燒陶保存技術",
+      "icon": "🏺",
+      "triggerTask": ["COASTAL_GATHER", "FISHING", "RIVER_SEARCH"],
+      "triggerCount": 6,
+      "discoveryChance": 0.24,
+      "requiresResources": {"clay": 1},
+      "speech": "這種黏土燒過之後變得好硬，可以做成容器！",
+      "title": "💡 意外發現：黏土可以燒成陶器！",
+      "story": "族人在潮間帶採集時意外發現黏土。經過火堆高溫燒製，黏土變成能盛放食物的陶器，鮮魚與野果不再那麼快腐壞。",
+      "question": "要不要把黏土放進火堆試著燒成容器？",
+      "correctOption": {"text": "【收納入技巧】燒製陶器，延長魚貝與水果的保存時間！", "effect": "解鎖燒陶窯，鮮食回合耗損大幅降低"},
+      "wrongOption": {"text": "黏土只是泥巴，拿去填洞", "feedback": "泥土在火中會產生新的硬度，值得留下來嘗試。"},
+      "museumNote": "陶器讓史前聚落能更穩定地保存、分配與烹調食物，是生活方式的重要轉變。"
+    },
+    {
+      "id": "fiber_discovery",
+      "name": "植物纖維搓繩技巧",
+      "icon": "🧶",
+      "triggerTask": "GATHER_WOOD",
+      "triggerCount": 5,
+      "discoveryChance": 0.28,
+      "speech": "這樹皮剝下來很韌！",
+      "title": "💡 意外發現：樹皮的強韌纖維！",
+      "story": "先民在森林剝取樹皮時，發現撕下來的細長植物纖維非常堅韌，用力扯也扯不斷！",
+      "question": "先民該如何善用這個偶然的發現？",
+      "correctOption": {
+        "text": "【收納入技巧】雙手搓捻成細繩，用於綑綁與編織！",
+        "effect": "解鎖纖維編織與工具綁定能力"
+      },
+      "wrongOption": {
+        "text": "當成普通柴火，直接丟進火塘燒掉",
+        "feedback": "好可惜！燒掉了就無法發現纖維的妙用了。請再思考看看！"
+      },
+      "museumNote": "國立臺灣史前文化博物館考據：史前先民善用葛藤與苧麻纖維搓捻成繩，這是製作複合工具、捆綁手柄與編織漁網的文明基石。"
+    },
+    {
+      "id": "sharp_stone_discovery",
+      "name": "單面打製刮削石器",
+      "icon": "🔪",
+      "triggerTask": "STRIKE_STONE",
+      "triggerCount": 6,
+      "discoveryChance": 0.24,
+      "speech": "碎石頭的邊緣好尖銳！",
+      "title": "💡 意外發現：尖尖的石頭很好用！",
+      "story": "在海灘敲碎硬礫石時，崩落的一塊小石片邊緣異常銳利，手指一碰就能割開獸皮與魚肉！",
+      "question": "尖尖的石頭可以怎麼用？",
+      "correctOption": {
+        "text": "【收納入技巧】保留鋒利石片，當成割肉刮皮工具！",
+        "effect": "解鎖刮削器技巧，石器生產效率大幅提升"
+      },
+      "wrongOption": {
+        "text": "敲碎的小石頭太危險了，踢進海裡",
+        "feedback": "尖銳石片正是最早的工具雛形！請重新收納這項技巧！"
+      },
+      "museumNote": "國立臺灣史前文化博物館考據：八仙洞遺址出土了大量的單面打製偏峰砍砸器與刮削石片器，正是先民利用碎石尖角處理獵物皮肉的智慧結晶。"
+    },
+    {
+      "id": "bone_hook_discovery",
+      "name": "骨角器與初生釣具",
+      "icon": "🪝",
+      "triggerTask": "COASTAL_GATHER",
+      "triggerCount": 7,
+      "discoveryChance": 0.20,
+      "requiresDiscoveries": ["fiber_discovery"],
+      "speech": "彎曲的魚骨能勾住肉！",
+      "title": "💡 意外發現：貝殼與魚骨做成釣具！",
+      "story": "在潮間帶清理海魚與厚貝殼時，發現彎曲的硬骨恰好能倒勾住肉塊，貝殼邊緣也十分鋒利！",
+      "question": "魚骨與銳利貝殼可以怎麼用？",
+      "correctOption": {
+        "text": "【收納入技巧】磨出倒鉤並綁上纖維繩，嘗試主動垂釣！",
+        "effect": "解鎖初生骨釣具，海洋採集量顯著提升"
+      },
+      "wrongOption": {
+        "text": "吃剩的魚骨貝殼沒有用了，隨手丟棄",
+        "feedback": "魚骨和貝殼能製作出精巧的骨角器與魚鉤！請重新想想看！"
+      },
+      "museumNote": "國立臺灣史前文化博物館考據：臺灣史前遺址出土豐富的磨製骨角器與骨魚鉤，標誌著先民從被動潮間帶撿拾走向主動垂釣深水魚類的偉大飛躍。"
+    },
+    {
+      "id": "shell_ornament_discovery",
+      "name": "魚貝裝飾品",
+      "icon": "🐚",
+      "triggerTask": "COASTAL_GATHER",
+      "triggerCount": 4,
+      "discoveryChance": 0.38,
+      "requiresFemaleElderPair": true,
+      "speech": "這些貝殼磨一磨，可以做成漂亮的裝飾！",
+      "title": "💡 意外發現：魚貝可以做成裝飾品！",
+      "story": "年輕女性跟著老婦人撿拾魚貝，老婦人注意到有些貝殼的形狀和顏色很適合穿繩佩戴。",
+      "question": "這些魚貝可以怎麼保存與使用？",
+      "correctOption": {"text": "【收納入技巧】磨平邊緣、鑽孔並串成裝飾品！", "effect": "解鎖魚貝裝飾品技術"},
+      "wrongOption": {"text": "全部敲碎丟回海邊", "feedback": "有些貝殼不只是食物，也能成為部族的裝飾與記號。"},
+      "museumNote": "貝殼穿飾與磨製裝飾品能反映史前人群的審美、身分與交換活動。"
+    },
+    {
+      "id": "bone_hook_discovery_after_fiber",
+      "name": "纖維魚鉤與漁獵技術",
+      "icon": "🎣",
+      "triggerTask": "COASTAL_GATHER",
+      "triggerCount": 9,
+      "discoveryChance": 0.42,
+      "requiresDiscoveries": ["fiber_discovery"],
+      "speech": "有了植物纖維，魚骨就能綁成真正的勾勾！",
+      "title": "💡 意外發現：纖維讓魚骨變成勾勾！",
+      "story": "森林帶回的植物纖維能牢牢綁住彎曲魚骨，讓原本只能撿拾的魚貝，開始有機會發展成主動漁獵。",
+      "question": "要不要把纖維與魚骨結合？",
+      "correctOption": {"text": "【收納入技巧】用纖維綁住魚骨倒勾，嘗試漁獵！", "effect": "解鎖初步漁獵技術"},
+      "wrongOption": {"text": "魚骨和纖維分開收好，不做嘗試", "feedback": "兩種材料結合，才會出現新的工具。"},
+      "museumNote": "複合工具需要不同材料的組合，纖維、骨角與貝殼共同推動了海洋資源利用。"
+    },
+    {
+      "id": "jade_polish_discovery",
+      "name": "玉石打磨裝飾技術",
+      "icon": "🟢",
+      "triggerTask": "STRIKE_STONE",
+      "triggerCount": 3,
+      "discoveryChance": 0.55,
+      "requiresDiscoveries": ["sharp_stone_discovery"],
+      "requiresResources": {"jade": 1},
+      "requiresPopulation": 6,
+      "speech": "這塊綠色石頭不只漂亮，慢慢磨會發亮！",
+      "title": "💡 意外發現：玉石可以打磨成裝飾品！",
+      "story": "族人撿到少見的綠色玉石，並用已知的尖石慢慢磨削，發現它能變成光滑的裝飾。",
+      "question": "要不要留下時間與人力打磨它？",
+      "correctOption": {"text": "【收納入技巧】投入人力打磨玉石，製作部族裝飾品！", "effect": "解鎖玉石打磨裝飾技術"},
+      "wrongOption": {"text": "玉石太硬，當普通石頭使用", "feedback": "稀有材料值得留下，等待足夠人口與時間慢慢打磨。"},
+      "museumNote": "玉石打磨需要穩定聚落、時間與人力，是社會分工逐漸形成的重要訊號。"
+    },
+    {
+      "id": "stone_knife_discovery",
+      "name": "石刀製作",
+      "icon": "🔪",
+      "triggerTask": "STRIKE_STONE",
+      "triggerCount": 10,
+      "discoveryChance": 0.5,
+      "requiresDiscoveries": ["sharp_stone_discovery"],
+      "speech": "這片尖石可以握住，拿來切東西！",
+      "title": "💡 意外發現：尖石可以成為石刀！",
+      "story": "族人學會保留鋒利邊緣，並用木柄與纖維固定，讓石片變成更安全的石刀。",
+      "question": "如何讓尖石變成穩定的工具？",
+      "correctOption": {"text": "【收納入技巧】修整刃口並綁上握柄，製作石刀！", "effect": "解鎖石刀製作技術"},
+      "wrongOption": {"text": "把所有尖石磨鈍", "feedback": "保留刃口，再想辦法讓它更好握。"},
+      "museumNote": "石片工具是史前人群處理食物、木材與獸皮的重要技術。"
+    },
+    {
+      "id": "stone_axe_adze_discovery",
+      "name": "石斧與石坌",
+      "icon": "🪓",
+      "triggerTask": "STRIKE_STONE",
+      "triggerCount": 14,
+      "discoveryChance": 0.42,
+      "requiresDiscoveries": ["stone_knife_discovery", "fiber_discovery"],
+      "speech": "如果把石頭固定在木柄上，就能砍更粗的木頭！",
+      "title": "💡 意外發現：石斧與石坌！",
+      "story": "石刀、木材與植物纖維逐漸結合，族人開始嘗試製作能砍削木頭的石斧與石坌。",
+      "question": "要不要把石器固定在木柄上？",
+      "correctOption": {"text": "【收納入技巧】石器、木柄與纖維綁成複合工具！", "effect": "解鎖石斧與石坌製作技術"},
+      "wrongOption": {"text": "只用手拿石頭敲打", "feedback": "複合工具能讓力道更集中，也更適合粗重工作。"},
+      "museumNote": "複合石器與木柄工具會提升伐木、建造與處理獵物的效率。"
+    },
+    {
+      "id": "hunting_technique_discovery",
+      "name": "初步補獵技術",
+      "icon": "🏹",
+      "triggerTask": "STRIKE_STONE",
+      "triggerCount": 18,
+      "discoveryChance": 0.3,
+      "requiresDiscoveries": ["stone_axe_adze_discovery", "bone_hook_discovery_after_fiber"],
+      "speech": "石器和魚鉤的道理，好像也能用在補獵上！",
+      "title": "💡 意外發現：工具開始帶動補獵！",
+      "story": "當族人熟悉尖石、木柄、纖維與倒勾後，開始思考如何製作更遠、更有力的補獵工具。",
+      "question": "要不要把現有工具的道理帶到陸地？",
+      "correctOption": {"text": "【收納入技巧】試作投擲與陷阱工具，發展初步補獵！", "effect": "解鎖舊石器後期補獵技術"},
+      "wrongOption": {"text": "只把工具留在營地使用", "feedback": "新技術可以跨工種轉用，試著把經驗帶到森林與獵場。"},
+      "museumNote": "工具技術的累積會逐步擴大人群能利用的環境與資源範圍。"
+    }
+  ]
+}

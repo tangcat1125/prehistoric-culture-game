@@ -1,0 +1,91 @@
+{
+  "skills": [
+    {
+      "id": "find_stone",
+      "name": "挑選石材",
+      "icon": "🪨",
+      "teacher": "elder_m",
+      "dialogue": "跟我來，我教你找石頭。",
+      "description": "認得海灘哪些是適合打製工具的安山岩與石英硬礫石。",
+      "steps": [
+        "👦 看長老在海灘挑石",
+        "👦 跟著長老辨認硬石",
+        "👦 自己挑出合用礫石"
+      ],
+      "miniGame": "pick_stone"
+    },
+    {
+      "id": "stone_tool",
+      "name": "打製石器",
+      "icon": "🔨",
+      "teacher": "elder_m",
+      "dialogue": "手握緊，斜斜敲下去！",
+      "description": "以石槌敲擊石核單面邊緣，打製出鋒利的偏峰砍砸器。",
+      "steps": [
+        "👦 看長老打擊石核",
+        "👦 跟著長老敲擊石片",
+        "👦 自己打出砍砸刃口"
+      ],
+      "miniGame": "strike_stone"
+    },
+    {
+      "id": "gather",
+      "name": "採集果實",
+      "icon": "🍒",
+      "teacher": "elder_f",
+      "dialogue": "這些能吃，那些不行。",
+      "description": "分辨野外無毒野果、植物塊根與海藻嫩葉。",
+      "steps": [
+        "👦 看長老分辨野生植物",
+        "👦 跟著長老分類可食果實",
+        "👦 自己採集無毒野果"
+      ],
+      "miniGame": "classify_fruit"
+    },
+    {
+      "id": "firewood",
+      "name": "整理柴火",
+      "icon": "🪵",
+      "teacher": "elder_f",
+      "dialogue": "乾燥的枯枝最好生火。",
+      "description": "撿拾乾燥樟木枯枝，為洞內火塘提供穩定燃料。",
+      "steps": [
+        "👦 看長老挑選乾燥枯木",
+        "👦 跟著長老抱回細樹枝",
+        "👦 自己為火塘補添柴火"
+      ],
+      "miniGame": "pick_wood"
+    }
+  ],
+  "ageStages": {
+    "infant": {
+      "name": "幼兒",
+      "ageRange": "0~4歲",
+      "canWork": false,
+      "behaviors": ["跟著大人漫步", "留在岩洞營地", "觀察大人動作", "玩耍石頭"]
+    },
+    "child": {
+      "name": "小孩",
+      "ageRange": "5~12歲",
+      "canWork": false,
+      "allowedTasks": ["撿小樹枝", "撿小石頭", "搬輕物件", "跟著長老學習技能"]
+    },
+    "youth": {
+      "name": "少年",
+      "ageRange": "13~17歲",
+      "canWork": true,
+      "requirement": "學過該技能才會做（年齡不是能力，學過才會做）"
+    },
+    "adult": {
+      "name": "青壯年",
+      "ageRange": "18~54歲",
+      "canWork": true
+    },
+    "elder": {
+      "name": "長老",
+      "ageRange": "55歲以上",
+      "canWork": true,
+      "role": "文化與技術傳承者"
+    }
+  }
+}
